@@ -1,9 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, memo } from "react";
 import Link from "next/link";
 
-// Component to display a single item in the cart
-const CartItem = ({ item, onRemove, onUpdateQuantity }) => (
+const CartItem = memo(({ item, onRemove, onUpdateQuantity }) => (
   <li className="flex flex-col py-2 border-b border-gray-200">
     {/* Top row: item name and price/remove button */}
     <div className="flex justify-between items-center">
@@ -62,14 +61,14 @@ const CartItem = ({ item, onRemove, onUpdateQuantity }) => (
       </span>
     </div>
   </li>
-);
+));
 
 // Main Cart component to manage and display the shopping cart
 const Cart = () => {
   // State to store cart items with initial example data
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "Allen & Heath SQ5 Mixer", price: 950, quantity: 1 },
-    { id: 2, name: "Shure SM58 Microphone", price: 150, quantity: 2 }
+    { id: 2, name: "Shure SM58 Microphone", price: 150, quantity: 2 },
   ]);
   // State to control cart panel visibility
   const [isOpen, setIsOpen] = useState(false);
@@ -108,34 +107,30 @@ const Cart = () => {
     }
   }, [cartItems.length]); // Dependency: re-run when cart item count changes
 
-  // Toggle cart panel visibility
-  const toggleCart = () => setIsOpen(!isOpen);
+  const toggleCart = useCallback(() => setIsOpen((prev) => !prev), []);
 
-  // Remove an item from the cart by ID
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
+  const removeItem = useCallback((id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  }, []);
 
-  // Update the quantity of an item in the cart
-  const updateQuantity = (id, newQuantity) => {
-    setCartItems(
-      cartItems.map((item) =>
+  const updateQuantity = useCallback((id, newQuantity) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item
       )
     );
-  };
+  }, []);
 
-  // Clear all items from the cart
-  const clearCart = () => {
-    setCartItems([]);
-  };
+  const clearCart = useCallback(() => setCartItems([]), []);
 
-  // Calculate total number of items in the cart
-  const itemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  // Calculate total price of all items in the cart
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
+  const itemCount = useMemo(
+    () => cartItems.reduce((acc, item) => acc + item.quantity, 0),
+    [cartItems]
+  );
+
+  const total = useMemo(
+    () => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+    [cartItems]
   );
 
   return (

@@ -1,13 +1,11 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import Hero from "@/components/hero/Hero_landing";
-import PopularKits from "@/components/popularKits/PopularKits";
-import CategorySection from "@/components/categorySection/CategorySection";
-import FeaturedEquipmentSection from "@/components/featuredEquipment/FeaturedEquipment";
+import Hero from '@/components/hero/Hero_landing'
+import PopularKits from '@/components/popularKits/PopularKits'
+import CategorySection from '@/components/categorySection/CategorySection'
+import FeaturedEquipmentSection from '@/components/featuredEquipment/FeaturedEquipment'
 
-export default function Home() {
+export default function Home () {
   return (
     <>
       <Hero />
@@ -15,5 +13,5 @@ export default function Home() {
       <FeaturedEquipmentSection />
       <CategorySection />
     </>
-  );
+  )
 }
